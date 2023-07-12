@@ -1,6 +1,12 @@
 package com.company.models;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "todos")
 public class Todo {
+
+    private Long id;
     private String title;
     private boolean completed;
 
@@ -12,6 +18,18 @@ public class Todo {
         this.completed = false;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Column(name = "title")
     public String getTitle() {
         return title;
     }
@@ -20,6 +38,7 @@ public class Todo {
         this.title = title;
     }
 
+    @Column(name = "is_completed")
     public boolean isCompleted() {
         return completed;
     }
@@ -31,7 +50,8 @@ public class Todo {
     @Override
     public String toString() {
         return "Todo{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", completed=" + completed +
                 '}';
     }

@@ -6,8 +6,10 @@ import java.util.List;
 
 public interface TodoService {
     void createTodo(Todo todo);
-    List<Todo> readTodos();
-    List<Todo> readTodos(boolean state);
+    List<Todo> getTodos();
+    List<Todo> getTodos(String searchTerm);
+    List<Todo> getTodos(boolean state);
+    Todo getTodo(long todoId);
     void updateTodo(Todo updatedTodo);
-    void deleteTodo(int index);
+    void deleteTodo(Todo todo);
 }

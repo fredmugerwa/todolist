@@ -1,5 +1,6 @@
 package com.company.views;
 
+import com.company.config.SessionConfiguration;
 import com.company.models.Todo;
 import com.company.services.TodoService;
 import com.company.services.impl.TodoServiceImpl;
@@ -17,7 +18,7 @@ public class TodoView {
     }
 
     public void displayMenu() {
-        System.out.println("********* Call Center Todo System *********");
+        System.out.println("********* Todo System *********");
         boolean running = true;
 
         while (running) {
@@ -52,6 +53,7 @@ public class TodoView {
                         deleteTodo();
                         break;
                     case 7:
+                        SessionConfiguration.shutdown();
                         running = false;
                         break;
                     default:
@@ -73,7 +75,7 @@ public class TodoView {
     }
 
     private void readTodos() {
-        List<Todo> todos = todoService.readTodos();
+        List<Todo> todos = todoService.getTodos("maven");
         if (todos.isEmpty())
             System.out.println("No todos available.");
         System.out.println(todos);
@@ -82,53 +84,49 @@ public class TodoView {
     private void readStateTodos() {
         System.out.print("Enter the state of the todos to display(true/false): ");
         boolean state = scanner.nextBoolean();
-        List<Todo> completedTodos = todoService.readTodos(state);
-        if (completedTodos.isEmpty())
+        List<Todo> todos = todoService.getTodos(state);
+        if (todos.isEmpty())
             System.out.println("No todos available.");
-        System.out.println(completedTodos);
+        System.out.println(todos);
     }
 
     private void updateTodoTitle() {
-        System.out.print("Enter the index of the todo to update: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-
-        if (index >= 0 && index < todoService.readTodos().size()) {
-            Todo todo = todoService.readTodos().get(index);
-
+        performTodoAction((todoService, todo) -> {
             System.out.print("Enter the new todo title: ");
             String newTitle = scanner.nextLine();
             todo.setTitle(newTitle);
-
             todoService.updateTodo(todo);
-        } else {
-            System.out.println("Invalid index. Please try again.");
-        }
+        });
     }
 
     private void updateTodoCompletedState() {
-        System.out.print("Enter the index of the todo to update: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-
-        if (index >= 0 && index < todoService.readTodos().size()) {
-            Todo todo = todoService.readTodos().get(index);
-
+        performTodoAction((todoService, todo) -> {
             System.out.print("Enter the new completed state (true/false): ");
             boolean newCompletedState = scanner.nextBoolean();
             todo.setCompleted(newCompletedState);
-
             todoService.updateTodo(todo);
-        } else {
-            System.out.println("Invalid index. Please try again.");
-        }
+        });
     }
 
     private void deleteTodo() {
-        System.out.print("Enter the index of the todo to delete: ");
-        int index = scanner.nextInt();
+        performTodoAction(TodoService::deleteTodo);
+    }
+
+    private void performTodoAction(TodoActions todoActions){
+        System.out.print("Enter the id of the todo: ");
+        long todoId = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
 
-        todoService.deleteTodo(index);
+        Todo todoOfId = todoService.getTodo(todoId);
+        if(todoOfId == null){
+            System.out.println("Todo of id not found");
+            return;
+        }
+        System.out.println(todoOfId);
+        todoActions.execute(todoService, todoOfId);
+    }
+
+    private interface TodoActions {
+        void execute(TodoService todoService, Todo todo);
     }
 }
