@@ -3,6 +3,7 @@ package com.company.services.impl;
 import com.company.dao.BaseDao;
 import com.company.models.Todo;
 import com.company.dao.TodoDAO;
+import com.company.models.User;
 import com.company.services.TodoService;
 
 import java.util.List;
@@ -29,8 +30,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    public List<Todo> getTodos(User user) {
+        return todoDAO.getTodos(user);
+    }
+
+    @Override
     public List<Todo> getTodos(String searchTerm) {
-        return todoDAO.getTodos(searchTerm);
+        return todoDAO.getAllTodos();
     }
 
     @Override
@@ -42,7 +48,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public Todo getTodo(long todoId) {
-        return todoDAO.getTodo(todoId);
+        return todoDAO.getAllTodos().get(0);
     }
 
     @Override

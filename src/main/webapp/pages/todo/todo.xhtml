@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/template/template.xhtml">
+
+    <ui:define name="content">
+        <h:form id="todoView" class="autoMargin">
+            <h1 class="center">Todo List</h1>
+            <h:inputText id="todoInput" value="#{todoBean.newTodo}" placeholder="Enter a new todo" />
+            <h:commandButton value="Add" action="#{todoBean.addTodo}" update="todoTable"
+                             rendered="#{empty todoBean.selectedTodo}"/>
+            <h:commandButton value="Update" action="#{todoBean.updateTodo}" update="todoTable"
+                             rendered="#{not empty todoBean.selectedTodo}"/>
+            <h:commandButton value="Logout" action="#{loginBean.logout}" />
+            <br/>
+
+            <h:dataTable id="todoTable" value="#{todoBean.todos}" var="todo">
+                <h:column>
+                    <f:facet name="header">Todo</f:facet>
+                    <h:outputText value="#{todo.title}" styleClass="#{todo.completed ? 'completed' : ''}" />
+                </h:column>
+                <h:column style="width: 200px;">
+                    <f:facet name="header">User</f:facet>
+                    <h:outputText value="No user" rendered="#{todo.user eq null}" />
+                    <h:outputText value="#{todo.user}" rendered="#{todo.user ne null}" />
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Options</f:facet>
+                    <h:commandButton value="Edit" action="#{todoBean.setSelectedTodo(todo)}" process="@this" update="todoTable"
+                                     rendered="#{empty todoBean.selectedTodo or todoBean.selectedTodo ne todo}"
+                                     disabled="#{not empty todoBean.selectedTodo}"/>
+                    <h:commandButton value="Delete" action="#{todoBean.deleteTodo(todo)}" process="@this" update="todoTable"
+                                     rendered="#{empty todoBean.selectedTodo or todoBean.selectedTodo ne todo}"
+                                     disabled="#{not empty todoBean.selectedTodo}"/>
+                    <h:commandButton value="Cancel" action="#{todoBean.setSelectedTodo(null)}" process="@this" update="todoTable"
+                                     rendered="#{not empty todoBean.selectedTodo and todoBean.selectedTodo eq todo}"/>
+                    <h:commandButton value="Mark as Complete" action="#{todoBean.markTodoComplete}" process="@this" update="todoTable"
+                                     rendered="#{not empty todoBean.selectedTodo and not todo.completed and todoBean.selectedTodo eq todo}" />
+                    <h:commandButton value="Unmark Complete" action="#{todoBean.unmarkTodoComplete}" process="@this" update="todoTable"
+                                     rendered="#{not empty todoBean.selectedTodo and todo.completed and todoBean.selectedTodo eq todo}" />
+                </h:column>
+            </h:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

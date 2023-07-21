@@ -9,6 +9,7 @@ public class Todo {
     private Long id;
     private String title;
     private boolean completed;
+    private User user;
 
     public Todo() {
     }
@@ -45,6 +46,16 @@ public class Todo {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

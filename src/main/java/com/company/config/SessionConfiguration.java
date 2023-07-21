@@ -1,6 +1,7 @@
 package com.company.config;
 
 import com.company.models.Todo;
+import com.company.models.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 
@@ -15,6 +16,7 @@ public class SessionConfiguration {
 
             // Add annotated classes here
             configuration.addAnnotatedClass(Todo.class);
+            configuration.addAnnotatedClass(User.class);
             return configuration.buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Failed to create SessionFactory: " + ex);

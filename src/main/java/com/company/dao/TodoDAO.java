@@ -1,7 +1,11 @@
 package com.company.dao;
 
+import com.company.config.SessionConfiguration;
 import com.company.models.Todo;
+import com.company.models.User;
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 
 import java.util.List;
@@ -40,9 +44,18 @@ public class TodoDAO {
                 .list());
     }
 
+    public List<Todo> getTodos(User user) {
+        return (List<Todo>) executeInSession(session -> {
+            String queryString = "FROM Todo WHERE user = :user";
+            Query query = session.createQuery(queryString);
+            query.setParameter("user", user);
+            return query.list();
+        });
+    }
+
     public List<Todo> getTodos(String searchTerm) {
         return executeInSession(session -> {
-            String queryString = "FROM  Todo t WHERE t.title LIKE :keyword";
+            String queryString = "FROM Todo t WHERE t.title LIKE :searchTerm";
             Query query = session.createQuery(queryString);
             query.setParameter("keyword", "%" + searchTerm + "%");
             return query.list();
